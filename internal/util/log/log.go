@@ -3,6 +3,7 @@ package util
 import (
 	"os"
 	"path/filepath"
+	"sync"
 
 	"github.com/HoronLee/GinHub/internal/config"
 	"go.uber.org/zap"
@@ -15,8 +16,51 @@ type Logger struct {
 	*zap.Logger
 }
 
+var (
+	globalLogger *Logger
+	mu           sync.RWMutex
+)
+
+// GetLogger 获取全局 logger（用于工具函数）
+func GetLogger() *Logger {
+	mu.RLock()
+	defer mu.RUnlock()
+	if globalLogger == nil {
+		// 返回默认 logger
+		return newDefaultLogger()
+	}
+	return globalLogger
+}
+
+// SetGlobalLogger 设置全局 logger（由 DI 系统调用）
+func SetGlobalLogger(logger *Logger) {
+	mu.Lock()
+	defer mu.Unlock()
+	globalLogger = logger
+}
+
+func newDefaultLogger() *Logger {
+	encoderConfig := zapcore.EncoderConfig{
+		TimeKey:        "time",
+		LevelKey:       "level",
+		CallerKey:      "caller",
+		MessageKey:     "msg",
+		EncodeTime:     zapcore.ISO8601TimeEncoder,
+		EncodeDuration: zapcore.SecondsDurationEncoder,
+		EncodeCaller:   zapcore.ShortCallerEncoder,
+		EncodeLevel:    zapcore.CapitalColorLevelEncoder,
+	}
+	core := zapcore.NewCore(
+		zapcore.NewConsoleEncoder(encoderConfig),
+		zapcore.AddSync(os.Stdout),
+		zapcore.DebugLevel,
+	)
+	return &Logger{zap.New(core, zap.AddCaller())}
+}
+
 // NewLogger 创建日志记录器
 func NewLogger(cfg *config.AppConfig) *Logger {
+	mode := cfg.Server.Mode
 	var cores []zapcore.Core
 	encoderConfig := zapcore.EncoderConfig{
 		TimeKey:        "time",
@@ -30,7 +74,7 @@ func NewLogger(cfg *config.AppConfig) *Logger {
 		EncodeCaller:   zapcore.ShortCallerEncoder,
 	}
 
-	if cfg.Server.Mode == "debug" {
+	if mode == "debug" {
 		// Debug模式：控制台输出，带颜色，非JSON
 		encoderConfig.EncodeLevel = zapcore.CapitalColorLevelEncoder
 		consoleEncoder := zapcore.NewConsoleEncoder(encoderConfig)
@@ -39,7 +83,7 @@ func NewLogger(cfg *config.AppConfig) *Logger {
 			zapcore.AddSync(os.Stdout),
 			zapcore.DebugLevel,
 		))
-	} else if cfg.Server.Mode == "release" {
+	} else {
 		// Release模式：控制台+文件，JSON格式，无颜色
 		encoderConfig.EncodeLevel = zapcore.LowercaseLevelEncoder
 		jsonEncoder := zapcore.NewJSONEncoder(encoderConfig)
@@ -66,11 +110,11 @@ func NewLogger(cfg *config.AppConfig) *Logger {
 			zapcore.AddSync(writer),
 			zapcore.InfoLevel,
 		))
-	} else {
-		panic("unsupport app mode")
 	}
 
 	core := zapcore.NewTee(cores...)
 	zapLogger := zap.New(core, zap.AddCaller(), zap.AddStacktrace(zapcore.ErrorLevel))
-	return &Logger{zapLogger}
+	logger := &Logger{zapLogger}
+	SetGlobalLogger(logger) // 自动设置为全局 logger
+	return logger
 }

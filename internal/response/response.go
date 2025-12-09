@@ -3,6 +3,8 @@ package response
 import (
 	"net/http"
 
+	commonModel "github.com/HoronLee/GinHub/internal/model/common"
+	errorUtil "github.com/HoronLee/GinHub/internal/util/err"
 	"github.com/gin-gonic/gin"
 )
 
@@ -21,50 +23,25 @@ type Response struct {
 	Err error `json:"-"`
 }
 
-// Execute 包装器，自动根据 Response 返回统一格式的 HTTP 响应
+// Execute 包装器，自动根据 Response 返回统一格式的 HTTP 响应 (仅处理返回类型为JSON的handler)
 func Execute(fn func(ctx *gin.Context) Response) gin.HandlerFunc {
 	return func(ctx *gin.Context) {
 		res := fn(ctx)
 		if res.Err != nil {
-			ctx.JSON(http.StatusBadRequest, gin.H{
-				"code": res.Code,
-				"msg":  res.Msg,
-				"err":  res.Err.Error(),
-			})
+			ctx.JSON(http.StatusBadRequest, commonModel.Fail[string](
+				errorUtil.HandleError(&commonModel.ServerError{
+					Msg: res.Msg,
+					Err: res.Err,
+				}),
+			))
 			return
 		}
 
 		// 支持自定义 code
 		if res.Code != 0 {
-			ctx.JSON(http.StatusOK, gin.H{
-				"code": res.Code,
-				"data": res.Data,
-				"msg":  res.Msg,
-			})
+			ctx.JSON(http.StatusOK, commonModel.OKWithCode(res.Data, res.Code, res.Msg))
 		} else {
-			ctx.JSON(http.StatusOK, gin.H{
-				"code": 0,
-				"data": res.Data,
-				"msg":  res.Msg,
-			})
+			ctx.JSON(http.StatusOK, commonModel.OK(res.Data, res.Msg))
 		}
-	}
-}
-
-// OK 成功响应
-func OK(data any, msg string) Response {
-	return Response{
-		Code: 0,
-		Data: data,
-		Msg:  msg,
-	}
-}
-
-// Fail 失败响应
-func Fail(code int, msg string, err error) Response {
-	return Response{
-		Code: code,
-		Msg:  msg,
-		Err:  err,
 	}
 }
