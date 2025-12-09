@@ -1,7 +1,7 @@
 package main
 
 import (
-	"github.com/horonlee/ginhub/cmd"
+	"github.com/HoronLee/GinHub/cmd"
 )
 
 func main() {

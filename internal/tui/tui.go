@@ -9,7 +9,7 @@ import (
 
 	"github.com/charmbracelet/lipgloss"
 
-	commonModel "github.com/horonlee/ginhub/internal/model/common"
+	commonModel "github.com/HoronLee/GinHub/internal/model/common"
 )
 
 var (
@@ -147,7 +147,7 @@ func GetGinHubInfo() string {
 		infoStyle.Render("📦 "+titleStyle.Render("Version")+": "+highlight.Render(commonModel.Version)),
 		infoStyle.Render("🧙 "+titleStyle.Render("Author")+": "+highlight.Render("HoronLee")),
 		infoStyle.Render("👉 "+titleStyle.Render("Website")+": "+highlight.Render("https://horonlee.com/")),
-		infoStyle.Render("👉 "+titleStyle.Render("GitHub")+": "+highlight.Render("https://github.com/horonlee/ginhub")),
+		infoStyle.Render("👉 "+titleStyle.Render("GitHub")+": "+highlight.Render("https://github.com/HoronLee/GinHub")),
 	)
 
 	full := lipgloss.JoinVertical(lipgloss.Left,

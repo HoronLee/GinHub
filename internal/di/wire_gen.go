@@ -7,11 +7,11 @@
 package di
 
 import (
-	"github.com/horonlee/ginhub/internal/config"
-	"github.com/horonlee/ginhub/internal/data"
-	"github.com/horonlee/ginhub/internal/handler"
-	"github.com/horonlee/ginhub/internal/server"
-	"github.com/horonlee/ginhub/internal/service"
+	"github.com/HoronLee/GinHub/internal/config"
+	"github.com/HoronLee/GinHub/internal/data"
+	"github.com/HoronLee/GinHub/internal/handler"
+	"github.com/HoronLee/GinHub/internal/server"
+	"github.com/HoronLee/GinHub/internal/service"
 )
 
 // Injectors from wire.go:

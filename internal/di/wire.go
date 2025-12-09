@@ -4,12 +4,12 @@
 package di
 
 import (
+	"github.com/HoronLee/GinHub/internal/config"
+	"github.com/HoronLee/GinHub/internal/data"
+	"github.com/HoronLee/GinHub/internal/handler"
+	"github.com/HoronLee/GinHub/internal/server"
+	"github.com/HoronLee/GinHub/internal/service"
 	"github.com/google/wire"
-	"github.com/horonlee/ginhub/internal/config"
-	"github.com/horonlee/ginhub/internal/data"
-	"github.com/horonlee/ginhub/internal/handler"
-	"github.com/horonlee/ginhub/internal/server"
-	"github.com/horonlee/ginhub/internal/service"
 )
 
 // InitServer 初始化服务器

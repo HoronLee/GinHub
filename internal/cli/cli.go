@@ -9,12 +9,12 @@ import (
 	"syscall"
 	"time"
 
+	"github.com/HoronLee/GinHub/internal/config"
+	"github.com/HoronLee/GinHub/internal/di"
+	commonModel "github.com/HoronLee/GinHub/internal/model/common"
+	"github.com/HoronLee/GinHub/internal/server"
+	"github.com/HoronLee/GinHub/internal/tui"
 	"github.com/charmbracelet/huh"
-	"github.com/horonlee/ginhub/internal/config"
-	"github.com/horonlee/ginhub/internal/di"
-	commonModel "github.com/horonlee/ginhub/internal/model/common"
-	"github.com/horonlee/ginhub/internal/server"
-	"github.com/horonlee/ginhub/internal/tui"
 )
 
 var s *server.HTTPServer // s 是全局的 GinHub 服务器实例

@@ -10,7 +10,7 @@ import (
 
 	"github.com/spf13/viper"
 
-	model "github.com/horonlee/ginhub/internal/model/common"
+	model "github.com/HoronLee/GinHub/internal/model/common"
 )
 
 // Config 全局配置变量

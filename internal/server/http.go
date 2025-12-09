@@ -6,11 +6,11 @@ import (
 	"log"
 	"net/http"
 
+	"github.com/HoronLee/GinHub/internal/config"
+	"github.com/HoronLee/GinHub/internal/handler"
+	"github.com/HoronLee/GinHub/internal/model/helloworld"
+	"github.com/HoronLee/GinHub/internal/router"
 	"github.com/gin-gonic/gin"
-	"github.com/horonlee/ginhub/internal/config"
-	"github.com/horonlee/ginhub/internal/handler"
-	"github.com/horonlee/ginhub/internal/model/helloworld"
-	"github.com/horonlee/ginhub/internal/router"
 	"gorm.io/gorm"
 )
 

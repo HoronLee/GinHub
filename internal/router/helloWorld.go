@@ -1,6 +1,6 @@
 package router
 
-import "github.com/horonlee/ginhub/internal/handler"
+import "github.com/HoronLee/GinHub/internal/handler"
 
 // setupHelloWorldRoutes 设置HelloWorld路由
 func setupHelloWorldRoutes(appRouterGroup *AppRouterGroup, h *handler.Handlers) {

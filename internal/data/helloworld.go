@@ -3,7 +3,7 @@ package data
 import (
 	"context"
 
-	"github.com/horonlee/ginhub/internal/model/helloworld"
+	"github.com/HoronLee/GinHub/internal/model/helloworld"
 	"gorm.io/gorm"
 )
 

@@ -1,10 +1,10 @@
 package handler
 
 import (
+	commonModel "github.com/HoronLee/GinHub/internal/model/common"
+	res "github.com/HoronLee/GinHub/internal/response"
+	"github.com/HoronLee/GinHub/internal/service"
 	"github.com/gin-gonic/gin"
-	commonModel "github.com/horonlee/ginhub/internal/model/common"
-	res "github.com/horonlee/ginhub/internal/response"
-	"github.com/horonlee/ginhub/internal/service"
 )
 
 type HelloWorldHandler struct {

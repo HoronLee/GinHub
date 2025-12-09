@@ -3,8 +3,8 @@ package service
 import (
 	"context"
 
-	"github.com/horonlee/ginhub/internal/data"
-	"github.com/horonlee/ginhub/internal/model/helloworld"
+	"github.com/HoronLee/GinHub/internal/data"
+	"github.com/HoronLee/GinHub/internal/model/helloworld"
 )
 
 type HelloWorldService interface {

@@ -5,8 +5,8 @@ import (
 	"log"
 	"time"
 
+	"github.com/HoronLee/GinHub/internal/config"
 	"github.com/google/wire"
-	"github.com/horonlee/ginhub/internal/config"
 	"gorm.io/driver/mysql"
 	"gorm.io/driver/sqlite"
 	"gorm.io/gorm"

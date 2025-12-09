@@ -1,8 +1,8 @@
 package router
 
 import (
+	"github.com/HoronLee/GinHub/internal/handler"
 	"github.com/gin-gonic/gin"
-	"github.com/horonlee/ginhub/internal/handler"
 )
 
 type AppRouterGroup struct {
