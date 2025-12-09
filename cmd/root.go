@@ -19,8 +19,6 @@ var rootCmd = &cobra.Command{
 
 	// 这个 Run 会在没有子命令时执行
 	Run: func(cmd *cobra.Command, args []string) {
-		// 加载配置
-		config.LoadAppConfig(configPath)
 		cli.DoTui()
 	},
 }
@@ -30,8 +28,6 @@ var serveCmd = &cobra.Command{
 	Use:   "serve",
 	Short: "启动 GinHub HTTP 服务",
 	Run: func(cmd *cobra.Command, args []string) {
-		// 加载配置
-		config.LoadAppConfig(configPath)
 		cli.DoServeWithBlock()
 	},
 }
@@ -41,8 +37,6 @@ var tuiCmd = &cobra.Command{
 	Use:   "tui",
 	Short: "启动 GinHub TUI",
 	Run: func(cmd *cobra.Command, args []string) {
-		// 加载配置
-		config.LoadAppConfig(configPath)
 		cli.DoTui()
 	},
 }
@@ -76,6 +70,9 @@ var helloCmd = &cobra.Command{
 
 // init 函数用于初始化根命令和子命令
 func init() {
+	// 加载配置
+	config.LoadAppConfig(configPath)
+
 	// 解决Windows下使用 Cobra 触发 mousetrap 提示
 	cobra.MousetrapHelpText = ""
 

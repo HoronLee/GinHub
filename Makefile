@@ -12,4 +12,4 @@ wire:
 
 .PHONY: debug
 debug:
-	go run main.go -c configs/debug-config.yaml
+	go run main.go serve -c configs/debug-config.yaml
