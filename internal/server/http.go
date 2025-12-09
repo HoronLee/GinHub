@@ -8,7 +8,6 @@ import (
 	"github.com/HoronLee/GinHub/internal/config"
 	"github.com/HoronLee/GinHub/internal/handler"
 	"github.com/HoronLee/GinHub/internal/middleware"
-	"github.com/HoronLee/GinHub/internal/model/helloworld"
 	"github.com/HoronLee/GinHub/internal/router"
 	util "github.com/HoronLee/GinHub/internal/util/log"
 	"github.com/gin-gonic/gin"
@@ -51,10 +50,6 @@ func NewHTTPServer(
 }
 
 func (s *HTTPServer) Start() error {
-	if err := s.db.AutoMigrate(&helloworld.HelloWorld{}); err != nil {
-		return fmt.Errorf("failed to migrate database: %w", err)
-	}
-
 	router.SetupRouter(s.engine, s.handlers)
 
 	addr := fmt.Sprintf("%s:%s", s.cfg.Server.Host, s.cfg.Server.Port)

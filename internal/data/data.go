@@ -5,6 +5,7 @@ import (
 	"time"
 
 	"github.com/HoronLee/GinHub/internal/config"
+	"github.com/HoronLee/GinHub/internal/model/helloworld"
 	util "github.com/HoronLee/GinHub/internal/util/log"
 	"github.com/google/wire"
 	"go.uber.org/zap"
@@ -52,5 +53,14 @@ func NewDB(cfg *config.AppConfig, logger *util.Logger) (*gorm.DB, error) {
 	sqlDB.SetConnMaxLifetime(time.Hour)
 
 	logger.Info("Database connected successfully", zap.String("driver", cfg.Database.Driver))
+
+	// 自动迁移数据库表
+	if err = db.AutoMigrate(
+		&helloworld.HelloWorld{},
+		// 未来添加新模型只需在这里追加
+	); err != nil {
+		return nil, fmt.Errorf("failed to migrate database: %w", err)
+	}
+
 	return db, nil
 }
