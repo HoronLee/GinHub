@@ -21,7 +21,7 @@ func (h *HelloWorldHandler) PostHelloWorld() gin.HandlerFunc {
 	return res.Execute(func(ctx *gin.Context) res.Response {
 		var req helloworld.CreateRequest
 		if err := ctx.ShouldBindJSON(&req); err != nil {
-			return res.Response{Msg: "Invalid request body", Err: err}
+			return res.Response{Msg: "", Err: err} // Msg 为空，自动使用 err 详情
 		}
 
 		if err := h.hwService.PostHelloWorld(ctx.Request.Context(), req.Message); err != nil {
