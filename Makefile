@@ -6,6 +6,10 @@ VERSION=$(shell git describe --tags --always)
 BUILD_TIME=$(shell date +%Y-%m-%dT%H:%M:%S)
 GIT_COMMIT=$(shell git rev-parse HEAD)
 
+.PHONY: deps
+deps:
+	go mod tidy
+
 .PHONY: wire
 wire:
 	cd internal/di && wire

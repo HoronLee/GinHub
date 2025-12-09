@@ -2,22 +2,22 @@ package data
 
 import (
 	"fmt"
-	"log"
 	"time"
 
 	"github.com/HoronLee/GinHub/internal/config"
+	util "github.com/HoronLee/GinHub/internal/util/log"
 	"github.com/google/wire"
+	"go.uber.org/zap"
 	"gorm.io/driver/mysql"
 	"gorm.io/driver/sqlite"
 	"gorm.io/gorm"
-	"gorm.io/gorm/logger"
 )
 
 // ProviderSet is data providers.
 var ProviderSet = wire.NewSet(NewDB, NewHelloWorldRepo)
 
 // NewDB 创建数据库连接
-func NewDB(cfg *config.AppConfig) (*gorm.DB, error) {
+func NewDB(cfg *config.AppConfig, logger *util.Logger) (*gorm.DB, error) {
 	var dialector gorm.Dialector
 
 	// 根据配置选择数据库驱动
@@ -31,12 +31,7 @@ func NewDB(cfg *config.AppConfig) (*gorm.DB, error) {
 	}
 
 	// 配置GORM日志
-	var gormLogger logger.Interface
-	if cfg.Database.LogMode == "debug" {
-		gormLogger = logger.Default.LogMode(logger.Info)
-	} else {
-		gormLogger = logger.Default.LogMode(logger.Silent)
-	}
+	gormLogger := util.NewGormLogger(logger)
 
 	// 打开数据库连接
 	db, err := gorm.Open(dialector, &gorm.Config{
@@ -56,6 +51,6 @@ func NewDB(cfg *config.AppConfig) (*gorm.DB, error) {
 	sqlDB.SetMaxOpenConns(100)
 	sqlDB.SetConnMaxLifetime(time.Hour)
 
-	log.Println("Database connected successfully")
+	logger.Info("Database connected successfully", zap.String("driver", cfg.Database.Driver))
 	return db, nil
 }

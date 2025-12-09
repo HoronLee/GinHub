@@ -3,14 +3,16 @@ package server
 import (
 	"context"
 	"fmt"
-	"log"
 	"net/http"
 
 	"github.com/HoronLee/GinHub/internal/config"
 	"github.com/HoronLee/GinHub/internal/handler"
+	"github.com/HoronLee/GinHub/internal/middleware"
 	"github.com/HoronLee/GinHub/internal/model/helloworld"
 	"github.com/HoronLee/GinHub/internal/router"
+	util "github.com/HoronLee/GinHub/internal/util/log"
 	"github.com/gin-gonic/gin"
+	"go.uber.org/zap"
 	"gorm.io/gorm"
 )
 
@@ -20,12 +22,14 @@ type HTTPServer struct {
 	httpServer *http.Server
 	handlers   *handler.Handlers
 	db         *gorm.DB
+	logger     *util.Logger
 }
 
 func NewHTTPServer(
 	cfg *config.AppConfig,
 	handlers *handler.Handlers,
 	db *gorm.DB,
+	logger *util.Logger,
 ) *HTTPServer {
 	if cfg.Server.Mode == "release" {
 		gin.SetMode(gin.ReleaseMode)
@@ -34,7 +38,7 @@ func NewHTTPServer(
 	}
 
 	engine := gin.New()
-	engine.Use(gin.Logger())
+	engine.Use(middleware.Logger(logger))
 	engine.Use(gin.Recovery())
 
 	return &HTTPServer{
@@ -42,6 +46,7 @@ func NewHTTPServer(
 		engine:   engine,
 		handlers: handlers,
 		db:       db,
+		logger:   logger,
 	}
 }
 
@@ -58,11 +63,11 @@ func (s *HTTPServer) Start() error {
 		Handler: s.engine,
 	}
 
-	log.Printf("Server starting on %s\n", addr)
+	s.logger.Info("Server starting", zap.String("addr", addr))
 
 	go func() {
 		if err := s.httpServer.ListenAndServe(); err != nil && err != http.ErrServerClosed {
-			log.Fatalf("Failed to start server: %v\n", err)
+			s.logger.Fatal("Failed to start server", zap.Error(err))
 		}
 	}()
 
@@ -70,7 +75,7 @@ func (s *HTTPServer) Start() error {
 }
 
 func (s *HTTPServer) Stop(ctx context.Context) error {
-	log.Println("Shutting down server...")
+	s.logger.Info("Shutting down server...")
 	if s.httpServer != nil {
 		return s.httpServer.Shutdown(ctx)
 	}

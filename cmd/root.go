@@ -16,8 +16,9 @@ var rootCmd = &cobra.Command{
 	Use:   "ginhub",
 	Short: "基于Gin、Gorm、Viper、Wire、Cobra的HTTP快速开发框架",
 	Long:  `基于Gin、Gorm、Viper、Wire、Cobra的HTTP快速开发框架`,
-
-	// 这个 Run 会在没有子命令时执行
+	PersistentPreRun: func(cmd *cobra.Command, args []string) {
+		config.LoadAppConfig(configPath)
+	},
 	Run: func(cmd *cobra.Command, args []string) {
 		cli.DoTui()
 	},
@@ -70,9 +71,6 @@ var helloCmd = &cobra.Command{
 
 // init 函数用于初始化根命令和子命令
 func init() {
-	// 加载配置
-	config.LoadAppConfig(configPath)
-
 	// 解决Windows下使用 Cobra 触发 mousetrap 提示
 	cobra.MousetrapHelpText = ""
 

@@ -6,3 +6,5 @@ example/
 configs/*
 bin/
 test/
+data/app.log
+logs/

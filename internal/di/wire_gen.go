@@ -12,13 +12,15 @@ import (
 	"github.com/HoronLee/GinHub/internal/handler"
 	"github.com/HoronLee/GinHub/internal/server"
 	"github.com/HoronLee/GinHub/internal/service"
+	"github.com/HoronLee/GinHub/internal/util/log"
 )
 
 // Injectors from wire.go:
 
 // InitServer 初始化服务器
 func InitServer(cfg *config.AppConfig) (*server.HTTPServer, error) {
-	db, err := data.NewDB(cfg)
+	logger := util.NewLogger(cfg)
+	db, err := data.NewDB(cfg, logger)
 	if err != nil {
 		return nil, err
 	}
@@ -26,6 +28,6 @@ func InitServer(cfg *config.AppConfig) (*server.HTTPServer, error) {
 	helloWorldService := service.NewHelloWorldService(helloWorldRepo)
 	helloWorldHandler := handler.NewHelloWorldHandler(helloWorldService)
 	handlers := handler.NewHandlers(helloWorldHandler)
-	httpServer := server.NewHTTPServer(cfg, handlers, db)
+	httpServer := server.NewHTTPServer(cfg, handlers, db, logger)
 	return httpServer, nil
 }
