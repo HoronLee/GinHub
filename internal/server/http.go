@@ -39,7 +39,7 @@ func NewHTTPServer(
 
 	engine := gin.New()
 	engine.Use(middleware.Logger(logger))
-	engine.Use(gin.Recovery())
+	engine.Use(middleware.Recovery(logger))
 
 	return &HTTPServer{
 		cfg:      cfg,
