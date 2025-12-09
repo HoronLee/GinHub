@@ -4,8 +4,11 @@ import (
 	"os"
 
 	"github.com/horonlee/ginhub/internal/cli"
+	"github.com/horonlee/ginhub/internal/config"
 	"github.com/spf13/cobra"
 )
+
+var configPath string
 
 // rootCmd 是 GinHub 的根命令
 // 默认启动CLI With TUI
@@ -16,7 +19,20 @@ var rootCmd = &cobra.Command{
 
 	// 这个 Run 会在没有子命令时执行
 	Run: func(cmd *cobra.Command, args []string) {
+		// 加载配置
+		config.LoadAppConfig(configPath)
 		cli.DoTui()
+	},
+}
+
+// serveCmd 是启动 GinHub 服务的命令
+var serveCmd = &cobra.Command{
+	Use:   "serve",
+	Short: "启动 GinHub HTTP 服务",
+	Run: func(cmd *cobra.Command, args []string) {
+		// 加载配置
+		config.LoadAppConfig(configPath)
+		cli.DoServeWithBlock()
 	},
 }
 
@@ -25,6 +41,8 @@ var tuiCmd = &cobra.Command{
 	Use:   "tui",
 	Short: "启动 GinHub TUI",
 	Run: func(cmd *cobra.Command, args []string) {
+		// 加载配置
+		config.LoadAppConfig(configPath)
 		cli.DoTui()
 	},
 }
@@ -60,6 +78,11 @@ var helloCmd = &cobra.Command{
 func init() {
 	// 解决Windows下使用 Cobra 触发 mousetrap 提示
 	cobra.MousetrapHelpText = ""
+	
+	// 添加全局flag
+	rootCmd.PersistentFlags().StringVarP(&configPath, "config", "c", "", "配置文件路径")
+	
+	rootCmd.AddCommand(serveCmd)
 	rootCmd.AddCommand(tuiCmd)
 	rootCmd.AddCommand(versionCmd)
 	rootCmd.AddCommand(infoCmd)

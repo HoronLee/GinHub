@@ -1,14 +1,89 @@
 package cli
 
 import (
+	"context"
 	"fmt"
 	"log"
 	"os"
+	"os/signal"
+	"syscall"
+	"time"
 
 	"github.com/charmbracelet/huh"
+	"github.com/horonlee/ginhub/internal/config"
+	"github.com/horonlee/ginhub/internal/di"
 	commonModel "github.com/horonlee/ginhub/internal/model/common"
+	"github.com/horonlee/ginhub/internal/server"
 	"github.com/horonlee/ginhub/internal/tui"
 )
+
+var s *server.HTTPServer // s 是全局的 GinHub 服务器实例
+
+// DoServe 启动服务
+func DoServe() {
+	// 通过Wire初始化服务器
+	srv, err := di.InitServer(&config.Config)
+	if err != nil {
+		log.Fatalf("Failed to initialize server: %v", err)
+	}
+	s = srv
+
+	// 启动服务器
+	if err := s.Start(); err != nil {
+		log.Fatalf("Failed to start server: %v", err)
+	}
+}
+
+// DoServeWithBlock 阻塞当前线程，直到服务器停止
+func DoServeWithBlock() {
+	// 通过Wire初始化服务器
+	srv, err := di.InitServer(&config.Config)
+	if err != nil {
+		log.Fatalf("Failed to initialize server: %v", err)
+	}
+	s = srv
+
+	// 启动服务器
+	if err := s.Start(); err != nil {
+		log.Fatalf("Failed to start server: %v", err)
+	}
+
+	// 阻塞主线程，直到接收到终止信号
+	quit := make(chan os.Signal, 1)
+	signal.Notify(quit, syscall.SIGINT, syscall.SIGTERM)
+	<-quit
+
+	// 创建 context，最大等待 5 秒优雅关闭
+	ctx, cancel := context.WithTimeout(context.Background(), 5*time.Second)
+	defer cancel()
+
+	if err := s.Stop(ctx); err != nil {
+		tui.PrintCLIInfo("❌ 服务停止", "服务器强制关闭")
+		os.Exit(1)
+	}
+	tui.PrintCLIInfo("🎉 停止服务成功", "GinHub 服务器已停止")
+}
+
+// DoStopServe 停止服务
+func DoStopServe() {
+	if s == nil {
+		tui.PrintCLIInfo("⚠️ 停止服务", "GinHub 服务器未启动")
+		return
+	}
+
+	// 创建 context，最大等待 5 秒优雅关闭
+	ctx, cancel := context.WithTimeout(context.Background(), 5*time.Second)
+	defer cancel()
+
+	if err := s.Stop(ctx); err != nil {
+		tui.PrintCLIInfo("😭 停止服务失败", err.Error())
+		return
+	}
+
+	s = nil // 清空全局服务器实例
+
+	tui.PrintCLIInfo("🎉 停止服务成功", "GinHub 服务器已停止")
+}
 
 // DoGinHubInfo 打印 GinHub 信息
 func DoGinHubInfo() {
@@ -26,7 +101,7 @@ func DoVersion() {
 	tui.PrintCLIWithBox(item)
 }
 
-// DoHello 打印 Ech0 Logo
+// DoHello 打印 GinHub Logo
 func DoHello() {
 	tui.ClearScreen()
 	tui.PrintCLIBanner()

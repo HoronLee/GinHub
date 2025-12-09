@@ -1,15 +1,15 @@
 server:
-  port: 6000
+  port: "8080"
   host: "0.0.0.0"
-  mode: "debug" # "release" or "debug"
+  mode: "debug"
 
 database:
   type: "mysql"
-  source: "ginhub:ginhub@tcp(serv.horon.top:3306)/ginhub?parseTime=True&loc=Local"
-  logmode: "release" # "release" or "debug"
+  source: "root:password@tcp(127.0.0.1:3306)/ginhub?charset=utf8mb4&parseTime=True&loc=Local"
+  logmode: "debug"
 
 auth:
   jwt:
-    expires: 2592000 # 30天（单位秒）
+    expires: 2592000
     issuer: "ginhub"
     audience: "ginhub"
