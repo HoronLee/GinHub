@@ -9,3 +9,7 @@ GIT_COMMIT=$(shell git rev-parse HEAD)
 .PHONY: wire
 wire:
 	cd internal/di && wire
+
+.PHONY: debug
+debug:
+	go run main.go -c configs/debug-config.yaml

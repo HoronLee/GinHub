@@ -2,9 +2,9 @@ package handler
 
 import (
 	"github.com/gin-gonic/gin"
+	commonModel "github.com/horonlee/ginhub/internal/model/common"
 	res "github.com/horonlee/ginhub/internal/response"
 	"github.com/horonlee/ginhub/internal/service"
-	commonModel "github.com/horonlee/ginhub/internal/model/common"
 )
 
 type HelloWorldHandler struct {

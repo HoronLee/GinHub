@@ -10,6 +10,7 @@ import (
 	"github.com/horonlee/ginhub/internal/config"
 	"github.com/horonlee/ginhub/internal/handler"
 	"github.com/horonlee/ginhub/internal/model/helloworld"
+	"github.com/horonlee/ginhub/internal/router"
 	"gorm.io/gorm"
 )
 
@@ -17,13 +18,13 @@ type HTTPServer struct {
 	cfg        *config.AppConfig
 	engine     *gin.Engine
 	httpServer *http.Server
-	hwHandler  *handler.HelloWorldHandler
+	handlers   *handler.Handlers
 	db         *gorm.DB
 }
 
 func NewHTTPServer(
 	cfg *config.AppConfig,
-	hwHandler *handler.HelloWorldHandler,
+	handlers *handler.Handlers,
 	db *gorm.DB,
 ) *HTTPServer {
 	if cfg.Server.Mode == "release" {
@@ -37,10 +38,10 @@ func NewHTTPServer(
 	engine.Use(gin.Recovery())
 
 	return &HTTPServer{
-		cfg:       cfg,
-		engine:    engine,
-		hwHandler: hwHandler,
-		db:        db,
+		cfg:      cfg,
+		engine:   engine,
+		handlers: handlers,
+		db:       db,
 	}
 }
 
@@ -49,7 +50,7 @@ func (s *HTTPServer) Start() error {
 		return fmt.Errorf("failed to migrate database: %w", err)
 	}
 
-	s.registerRoutes()
+	router.SetupRouter(s.engine, s.handlers)
 
 	addr := fmt.Sprintf("%s:%s", s.cfg.Server.Host, s.cfg.Server.Port)
 	s.httpServer = &http.Server{
@@ -74,10 +75,6 @@ func (s *HTTPServer) Stop(ctx context.Context) error {
 		return s.httpServer.Shutdown(ctx)
 	}
 	return nil
-}
-
-func (s *HTTPServer) registerRoutes() {
-	s.engine.POST("/helloworld", s.hwHandler.PostHelloWorld())
 }
 
 func (s *HTTPServer) GetEngine() *gin.Engine {
