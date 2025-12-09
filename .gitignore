@@ -1,6 +1,6 @@
-.vscode
-.claude
-.kilocode
+.vscode/
+.claude/
+.kilocode/
 
 example/
 configs/*
