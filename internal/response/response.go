@@ -9,15 +9,16 @@ import (
 )
 
 // Response 代表 handler 层的执行结果封装
+// swagger:model Response
 type Response struct {
 	// Code 状态码，非0时表示自定义HTTP业务状态码
-	Code int `json:"code"`
+	Code int `json:"code" example:"0" description:"状态码，0表示成功，非0表示自定义业务状态码"`
 
 	// Data 响应数据，具体内容因接口而异
-	Data any `json:"data,omitempty"`
+	Data any `json:"data,omitempty" description:"响应数据，具体内容因接口而异"`
 
 	// Msg 返回信息，通常是状态描述
-	Msg string `json:"msg"`
+	Msg string `json:"msg" example:"success" description:"返回信息，通常是状态描述"`
 
 	// Err 错误信息，序列化时忽略（仅供内部日志使用）
 	Err error `json:"-"`

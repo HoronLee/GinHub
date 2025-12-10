@@ -39,6 +39,19 @@ type AppConfig struct {
 			Audience string `mapstructure:"audience"` // JWT的受众
 		} `mapstructure:"jwt"`
 	} `mapstructure:"auth"`
+	Swagger struct {
+		Host         string   `mapstructure:"host"`          // Swagger文档的主机地址
+		BasePath     string   `mapstructure:"basepath"`      // API基础路径
+		Schemes      []string `mapstructure:"schemes"`       // 支持的协议方案
+		Title        string   `mapstructure:"title"`         // API文档标题
+		Description  string   `mapstructure:"description"`   // API文档描述
+		Version      string   `mapstructure:"version"`       // API版本
+		ContactName  string   `mapstructure:"contact_name"`  // 联系人姓名
+		ContactURL   string   `mapstructure:"contact_url"`   // 联系人URL
+		ContactEmail string   `mapstructure:"contact_email"` // 联系人邮箱
+		LicenseName  string   `mapstructure:"license_name"`  // 许可证名称
+		LicenseURL   string   `mapstructure:"license_url"`   // 许可证URL
+	} `mapstructure:"swagger"`
 }
 
 //go:embed config.yaml

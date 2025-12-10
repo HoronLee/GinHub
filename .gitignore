@@ -2,6 +2,7 @@
 .claude/
 .kilocode/
 .kiro/
+.DS_Store
 
 example/
 configs/*

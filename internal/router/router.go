@@ -18,6 +18,9 @@ func SetupRouter(r *gin.Engine, h *handler.Handlers) {
 	v1RouterGroup := setupV1RouterGroup(r)
 	setupV1Routes(v1RouterGroup, h)
 
+	// 设置资源路由（包括 Swagger UI）
+	setupResourceRoutes(v1RouterGroup, h)
+
 	// 未来可以添加 v2 版本路由
 	// v2RouterGroup := setupV2RouterGroup(r)
 	// setupV2Routes(v2RouterGroup, h)

@@ -17,6 +17,15 @@ func NewHelloWorldHandler(hwService service.HelloWorldService) *HelloWorldHandle
 }
 
 // PostHelloWorld 处理POST /helloworld请求
+// @Summary 创建HelloWorld消息
+// @Description 创建一个新的HelloWorld消息并返回系统信息
+// @Tags HelloWorld
+// @Accept json
+// @Produce json
+// @Param request body helloworld.CreateRequest true "HelloWorld创建请求参数"
+// @Success 200 {object} res.Response{data=helloworld.CreateResponse} "创建成功，返回消息和系统信息"
+// @Failure 400 {object} res.Response "请求参数错误或创建失败"
+// @Router /helloworld [post]
 func (h *HelloWorldHandler) PostHelloWorld() gin.HandlerFunc {
 	return res.Execute(func(ctx *gin.Context) res.Response {
 		var req helloworld.CreateRequest
