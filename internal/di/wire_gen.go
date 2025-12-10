@@ -18,16 +18,25 @@ import (
 // Injectors from wire.go:
 
 // InitServer 初始化服务器
-func InitServer(cfg *config.AppConfig) (*server.HTTPServer, error) {
+func InitServer(cfg *config.AppConfig) (*server.HTTPServer, func(), error) {
 	logger := util.NewLogger(cfg)
 	db, err := data.NewDB(cfg, logger)
 	if err != nil {
-		return nil, err
+		return nil, nil, err
 	}
-	helloWorldRepo := data.NewHelloWorldRepo(db)
+	dataData, cleanup, err := data.NewData(db, logger)
+	if err != nil {
+		return nil, nil, err
+	}
+	helloWorldRepo := data.NewHelloWorldRepo(dataData)
 	helloWorldService := service.NewHelloWorldService(helloWorldRepo)
 	helloWorldHandler := handler.NewHelloWorldHandler(helloWorldService)
-	handlers := handler.NewHandlers(helloWorldHandler)
+	userRepo := data.NewUserRepo(dataData)
+	userService := service.NewUserService(userRepo)
+	userHandler := handler.NewUserHandler(userService)
+	handlers := handler.NewHandlers(helloWorldHandler, userHandler)
 	httpServer := server.NewHTTPServer(cfg, handlers, db, logger)
-	return httpServer, nil
+	return httpServer, func() {
+		cleanup()
+	}, nil
 }

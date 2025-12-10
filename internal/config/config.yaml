@@ -10,6 +10,7 @@ database:
 
 auth:
   jwt:
-    expires: 2592000
+    secret: "your-secret-key-change-in-production"
+    expires: 86400
     issuer: "ginhub"
-    audience: "ginhub"
+    audience: "ginhub-api"

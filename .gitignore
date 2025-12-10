@@ -1,6 +1,7 @@
 .vscode/
 .claude/
 .kilocode/
+.kiro/
 
 example/
 configs/*

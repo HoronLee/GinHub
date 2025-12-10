@@ -6,6 +6,7 @@ import (
 
 	"github.com/HoronLee/GinHub/internal/config"
 	"github.com/HoronLee/GinHub/internal/model/helloworld"
+	"github.com/HoronLee/GinHub/internal/model/user"
 	util "github.com/HoronLee/GinHub/internal/util/log"
 	"github.com/google/wire"
 	"go.uber.org/zap"
@@ -15,7 +16,24 @@ import (
 )
 
 // ProviderSet is data providers.
-var ProviderSet = wire.NewSet(NewDB, NewHelloWorldRepo)
+var ProviderSet = wire.NewSet(NewDB, NewData, NewHelloWorldRepo, NewUserRepo)
+
+// Data 统一的数据访问层结构体
+type Data struct {
+	db  *gorm.DB
+	log *util.Logger
+}
+
+// NewData 创建Data实例
+func NewData(db *gorm.DB, logger *util.Logger) (*Data, func(), error) {
+	cleanup := func() {
+		logger.Info("closing the data resources")
+	}
+	return &Data{
+		db:  db,
+		log: logger,
+	}, cleanup, nil
+}
 
 // NewDB 创建数据库连接
 func NewDB(cfg *config.AppConfig, logger *util.Logger) (*gorm.DB, error) {
@@ -57,7 +75,7 @@ func NewDB(cfg *config.AppConfig, logger *util.Logger) (*gorm.DB, error) {
 	// 自动迁移数据库表
 	if err = db.AutoMigrate(
 		&helloworld.HelloWorld{},
-		// 未来添加新模型只需在这里追加
+		&user.User{},
 	); err != nil {
 		return nil, fmt.Errorf("failed to migrate database: %w", err)
 	}

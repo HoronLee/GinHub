@@ -22,10 +22,11 @@ var s *server.HTTPServer // s 是全局的 GinHub 服务器实例
 // DoServe 启动服务
 func DoServe() {
 	// 通过Wire初始化服务器
-	srv, err := di.InitServer(&config.Config)
+	srv, cleanup, err := di.InitServer(&config.Config)
 	if err != nil {
 		log.Fatalf("Failed to initialize server: %v", err)
 	}
+	defer cleanup()
 	s = srv
 
 	// 启动服务器
@@ -37,10 +38,11 @@ func DoServe() {
 // DoServeWithBlock 阻塞当前线程，直到服务器停止
 func DoServeWithBlock() {
 	// 通过Wire初始化服务器
-	srv, err := di.InitServer(&config.Config)
+	srv, cleanup, err := di.InitServer(&config.Config)
 	if err != nil {
 		log.Fatalf("Failed to initialize server: %v", err)
 	}
+	defer cleanup()
 	s = srv
 
 	// 启动服务器

@@ -32,7 +32,6 @@ func NewJWT[T any](cfg *Config) *JWT[T] {
 // claims 参数必须是你的自定义 claims 结构体的指针。
 func (j *JWT[T]) GenerateToken(claims *T) (string, error) {
 	// claims 结构体的指针必须实现 jwt.Claims。
-	// 我们在这里执行运行时检查。
 	jwtClaims, ok := any(claims).(jwt.Claims)
 	if !ok {
 		return "", fmt.Errorf("claims type *%T does not implement jwt.Claims. Did you forget to embed jwt.RegisteredClaims?", *claims)
@@ -48,9 +47,6 @@ func (j *JWT[T]) ParseToken(tokenString string) (*T, error) {
 	claims := new(T)
 
 	// claims 结构体的指针必须实现 jwt.Claims。
-	// 在将其传递给解析器之前，我们通过类型断言来检查这一点。
-	// 这是由于 Go 泛型的一个限制，即编译器
-	// 无法证明 '*T' 实现了一个接口，即使它在运行时会实现。
 	claimsInterface, ok := any(claims).(jwt.Claims)
 	if !ok {
 		return nil, fmt.Errorf("claims type *%T does not implement jwt.Claims. Did you forget to embed jwt.RegisteredClaims?", *claims)
@@ -68,8 +64,6 @@ func (j *JWT[T]) ParseToken(tokenString string) (*T, error) {
 		return nil, errors.New("invalid token")
 	}
 
-	// 由于 claimsInterface 是 `claims` 指针的包装器，
-	// `claims` 现在包含了已解析和验证的数据。
 	return claims, nil
 }
 

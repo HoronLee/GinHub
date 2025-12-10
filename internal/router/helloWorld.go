@@ -6,4 +6,7 @@ import "github.com/HoronLee/GinHub/internal/handler"
 func setupHelloWorldRoutes(appRouterGroup *AppRouterGroup, h *handler.Handlers) {
 	// Public
 	appRouterGroup.PublicRouterGroup.POST("/helloworld", h.HelloWorldHandler.PostHelloWorld())
+
+	// Private
+
 }

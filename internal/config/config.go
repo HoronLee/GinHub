@@ -33,6 +33,7 @@ type AppConfig struct {
 	} `mapstructure:"database"`
 	Auth struct {
 		Jwt struct {
+			Secret   string `mapstructure:"secret"`   // JWT的密钥
 			Expires  int    `mapstructure:"expires"`  // JWT的过期时间，单位为秒
 			Issuer   string `mapstructure:"issuer"`   // JWT的发行者
 			Audience string `mapstructure:"audience"` // JWT的受众
@@ -82,15 +83,21 @@ func LoadAppConfig(configPath string) {
 
 // GetJWTSecret 加载JWT密钥
 func GetJWTSecret() []byte {
-	// 从环境变量中获取JWT密钥
+	// 优先级：环境变量 > 配置文件 > 随机生成
 	secret := os.Getenv("JWT_SECRET")
-	if secret == "" { // 如果没有设置环境变量，则使用UUID生成默认密钥
+	if secret == "" {
+		// 从配置文件中获取
+		secret = Config.Auth.Jwt.Secret
+	}
+	if secret == "" {
+		// 如果都没有设置，则使用随机生成的密钥
 		b := make([]byte, 16)
 		_, err := rand.Read(b)
 		if err != nil {
 			log.Fatal("failed to generate random JWT secret:", err)
 		}
 		secret = hex.EncodeToString(b)
+		log.Println("Warning: Using randomly generated JWT secret. Set JWT_SECRET environment variable or auth.jwt.secret in config for production.")
 	}
 
 	return []byte(secret)

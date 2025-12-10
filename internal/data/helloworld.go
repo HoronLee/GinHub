@@ -4,37 +4,42 @@ import (
 	"context"
 
 	"github.com/HoronLee/GinHub/internal/model/helloworld"
-	"gorm.io/gorm"
+	"github.com/HoronLee/GinHub/internal/service"
+	"go.uber.org/zap"
 )
-
-// HelloWorldRepo 定义HelloWorld数据访问接口
-type HelloWorldRepo interface {
-	CreateHelloWorld(ctx context.Context, hw *helloworld.HelloWorld) error
-	GetDatabaseInfo(ctx context.Context) (string, error)
-}
 
 // helloworldRepo HelloWorld数据访问实现
 type helloworldRepo struct {
-	db *gorm.DB
+	data *Data
 }
 
-// NewHelloWorldRepo 创建HelloWorldRepo实例（通过Wire注入）
-func NewHelloWorldRepo(db *gorm.DB) HelloWorldRepo {
+// NewHelloWorldRepo 创建HelloWorldRepo实例
+func NewHelloWorldRepo(data *Data) service.HelloWorldRepo {
 	return &helloworldRepo{
-		db: db,
+		data: data,
 	}
 }
 
 // CreateHelloWorld 创建HelloWorld记录
 func (r *helloworldRepo) CreateHelloWorld(ctx context.Context, hw *helloworld.HelloWorld) error {
-	return r.db.WithContext(ctx).Create(hw).Error
+	r.data.log.Debug("Creating HelloWorld record", zap.String("message", hw.Message))
+	err := r.data.db.WithContext(ctx).Create(hw).Error
+	if err != nil {
+		r.data.log.Error("Failed to create HelloWorld record", zap.Error(err))
+		return err
+	}
+	r.data.log.Info("HelloWorld record created successfully", zap.Uint("id", hw.ID))
+	return nil
 }
 
 // GetDatabaseInfo 获取数据库连接信息
 func (r *helloworldRepo) GetDatabaseInfo(ctx context.Context) (string, error) {
-	dbName := r.db.Migrator().CurrentDatabase()
+	r.data.log.Debug("Getting database info")
+	dbName := r.data.db.Migrator().CurrentDatabase()
 	if dbName == "" {
 		dbName = "unknown"
 	}
-	return "Connected to: " + dbName, nil
+	info := "Connected to: " + dbName
+	r.data.log.Debug("Database info retrieved", zap.String("info", info))
+	return info, nil
 }

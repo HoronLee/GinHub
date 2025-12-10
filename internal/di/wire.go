@@ -14,7 +14,7 @@ import (
 )
 
 // InitServer 初始化服务器
-func InitServer(cfg *config.AppConfig) (*server.HTTPServer, error) {
+func InitServer(cfg *config.AppConfig) (*server.HTTPServer, func(), error) {
 	wire.Build(
 		util.NewLogger,
 		data.ProviderSet,
@@ -22,5 +22,5 @@ func InitServer(cfg *config.AppConfig) (*server.HTTPServer, error) {
 		handler.ProviderSet,
 		server.ProviderSet,
 	)
-	return nil, nil
+	return nil, nil, nil
 }
