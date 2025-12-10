@@ -2,12 +2,14 @@ package router
 
 import "github.com/HoronLee/GinHub/internal/handler"
 
-// setupUserRoutes 设置用户路由
-func setupUserRoutes(appRouterGroup *AppRouterGroup, h *handler.Handlers) {
+// setupV1UserRoutes 设置 v1 版本的用户路由
+func setupV1UserRoutes(routerGroup *VersionedRouterGroup, h *handler.Handlers) {
 	// Public routes - 公开路由，无需认证
-	appRouterGroup.PublicRouterGroup.POST("/register", h.UserHandler.Register())
-	appRouterGroup.PublicRouterGroup.POST("/login", h.UserHandler.Login())
+	// 路径: POST /api/v1/register, POST /api/v1/login
+	routerGroup.PublicRouterGroup.POST("/register", h.UserHandler.Register())
+	routerGroup.PublicRouterGroup.POST("/login", h.UserHandler.Login())
 
 	// Private routes - 私有路由，需要 JWT 认证
-	appRouterGroup.PrivateRouterGroup.DELETE("/user", h.UserHandler.DeleteUser())
+	// 路径: DELETE /api/v1/user
+	routerGroup.PrivateRouterGroup.DELETE("/user", h.UserHandler.DeleteUser())
 }

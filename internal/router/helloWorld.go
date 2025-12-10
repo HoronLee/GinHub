@@ -2,11 +2,12 @@ package router
 
 import "github.com/HoronLee/GinHub/internal/handler"
 
-// setupHelloWorldRoutes 设置HelloWorld路由
-func setupHelloWorldRoutes(appRouterGroup *AppRouterGroup, h *handler.Handlers) {
-	// Public
-	appRouterGroup.PublicRouterGroup.POST("/helloworld", h.HelloWorldHandler.PostHelloWorld())
+// setupV1HelloWorldRoutes 设置 v1 版本的 HelloWorld 路由
+func setupV1HelloWorldRoutes(routerGroup *VersionedRouterGroup, h *handler.Handlers) {
+	// Public routes - 公开路由，无需认证
+	// 路径: POST /api/v1/helloworld
+	routerGroup.PublicRouterGroup.POST("/helloworld", h.HelloWorldHandler.PostHelloWorld())
 
-	// Private
-
+	// Private routes - 私有路由，需要 JWT 认证
+	// 可以在这里添加需要认证的 HelloWorld 相关路由
 }
