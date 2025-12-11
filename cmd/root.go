@@ -69,21 +69,6 @@ var helloCmd = &cobra.Command{
 	},
 }
 
-// init 函数用于初始化根命令和子命令
-func init() {
-	// 解决Windows下使用 Cobra 触发 mousetrap 提示
-	cobra.MousetrapHelpText = ""
-
-	// 添加全局flag
-	rootCmd.PersistentFlags().StringVarP(&configPath, "config", "c", "", "配置文件路径")
-
-	rootCmd.AddCommand(serveCmd)
-	rootCmd.AddCommand(tuiCmd)
-	rootCmd.AddCommand(versionCmd)
-	rootCmd.AddCommand(infoCmd)
-	rootCmd.AddCommand(helloCmd)
-}
-
 // Execute 是根命令的入口函数
 func Execute() {
 	if err := rootCmd.Execute(); err != nil {

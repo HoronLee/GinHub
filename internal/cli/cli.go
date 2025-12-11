@@ -87,28 +87,6 @@ func DoStopServe() {
 	tui.PrintCLIInfo("🎉 停止服务成功", "GinHub 服务器已停止")
 }
 
-// DoGinHubInfo 打印 GinHub 信息
-func DoGinHubInfo() {
-	if _, err := fmt.Fprintln(os.Stdout, tui.GetGinHubInfo()); err != nil {
-		fmt.Fprintf(os.Stderr, "failed to print GinHub info: %v\n", err)
-	}
-}
-
-// DoVersion 打印版本信息
-func DoVersion() {
-	item := struct{ Title, Msg string }{
-		Title: "📦 当前版本",
-		Msg:   "v" + commonModel.Version,
-	}
-	tui.PrintCLIWithBox(item)
-}
-
-// DoHello 打印 GinHub Logo
-func DoHello() {
-	tui.ClearScreen()
-	tui.PrintCLIBanner()
-}
-
 // DoTui 执行 TUI
 func DoTui() {
 	// 清除屏幕当前字符
@@ -163,4 +141,26 @@ func DoTui() {
 			return
 		}
 	}
+}
+
+// DoVersion 打印版本信息
+func DoVersion() {
+	item := struct{ Title, Msg string }{
+		Title: "📦 当前版本",
+		Msg:   "v" + commonModel.Version,
+	}
+	tui.PrintCLIWithBox(item)
+}
+
+// DoGinHubInfo 打印 GinHub 信息
+func DoGinHubInfo() {
+	if _, err := fmt.Fprintln(os.Stdout, tui.GetGinHubInfo()); err != nil {
+		fmt.Fprintf(os.Stderr, "failed to print GinHub info: %v\n", err)
+	}
+}
+
+// DoHello 打印 GinHub Logo
+func DoHello() {
+	tui.ClearScreen()
+	tui.PrintCLIBanner()
 }
