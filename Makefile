@@ -6,7 +6,7 @@ VERSION=$(shell git describe --tags --always)
 BUILD_TIME=$(shell date +%Y-%m-%dT%H:%M:%S)
 GIT_COMMIT=$(shell git rev-parse HEAD)
 
-.PHONY: deps
+.PHONY: tidy
 deps:
 	go mod tidy
 
@@ -18,9 +18,10 @@ wire:
 swagger:
 	swag init -g internal/server/http.go -o internal/swagger --parseDependency --parseInternal --exclude example
 
-.PHONY: swagger-install
+.PHONY: deps
 swagger-install:
 	go install github.com/swaggo/swag/cmd/swag@latest
+	go install github.com/google/wire/cmd/wire@latest
 
 .PHONY: build
 build: swagger wire
