@@ -9,13 +9,13 @@ import (
 
 // UserHandler 用户处理器
 type UserHandler struct {
-	userService service.UserService
+	svc *service.UserService
 }
 
 // NewUserHandler 创建UserHandler实例
-func NewUserHandler(userService service.UserService) *UserHandler {
+func NewUserHandler(svc *service.UserService) *UserHandler {
 	return &UserHandler{
-		userService: userService,
+		svc: svc,
 	}
 }
 
@@ -36,7 +36,7 @@ func (h *UserHandler) Register() gin.HandlerFunc {
 			return res.Response{Msg: "Invalid request body", Err: err}
 		}
 
-		if err := h.userService.Register(ctx.Request.Context(), req); err != nil {
+		if err := h.svc.Register(ctx.Request.Context(), req); err != nil {
 			return res.Response{Msg: "Registration failed", Err: err}
 		}
 
@@ -64,7 +64,7 @@ func (h *UserHandler) Login() gin.HandlerFunc {
 			return res.Response{Msg: "Invalid request body", Err: err}
 		}
 
-		token, err := h.userService.Login(ctx.Request.Context(), req)
+		token, err := h.svc.Login(ctx.Request.Context(), req)
 		if err != nil {
 			return res.Response{Msg: "Login failed", Err: err}
 		}
@@ -102,7 +102,7 @@ func (h *UserHandler) DeleteUser() gin.HandlerFunc {
 
 		// 也可以从URL参数获取要删除的用户ID（如果需要管理员删除其他用户）
 		// 这里简化为删除当前登录用户
-		if err := h.userService.DeleteUser(ctx.Request.Context(), userID); err != nil {
+		if err := h.svc.DeleteUser(ctx.Request.Context(), userID); err != nil {
 			return res.Response{Msg: "Failed to delete user", Err: err}
 		}
 

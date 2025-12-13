@@ -12,27 +12,21 @@ type HelloWorldRepo interface {
 	GetDatabaseInfo(ctx context.Context) (string, error)
 }
 
-// HelloWorldService 定义HelloWorld服务接口
-type HelloWorldService interface {
-	PostHelloWorld(ctx context.Context, message string) error
-	GetDatabaseInfo(ctx context.Context) (string, error)
-}
-
-// helloWorldService HelloWorld服务实现
-type helloWorldService struct {
+// HelloWorldService HelloWorld服务实现
+type HelloWorldService struct {
 	repo HelloWorldRepo
 }
 
 // NewHelloWorldService 创建HelloWorldService实例
-func NewHelloWorldService(repo HelloWorldRepo) HelloWorldService {
-	return &helloWorldService{repo: repo}
+func NewHelloWorldService(repo HelloWorldRepo) *HelloWorldService {
+	return &HelloWorldService{repo: repo}
 }
 
-func (s *helloWorldService) PostHelloWorld(ctx context.Context, message string) error {
+func (s *HelloWorldService) PostHelloWorld(ctx context.Context, message string) error {
 	hw := &helloworld.HelloWorld{Message: message}
 	return s.repo.CreateHelloWorld(ctx, hw)
 }
 
-func (s *helloWorldService) GetDatabaseInfo(ctx context.Context) (string, error) {
+func (s *HelloWorldService) GetDatabaseInfo(ctx context.Context) (string, error) {
 	return s.repo.GetDatabaseInfo(ctx)
 }

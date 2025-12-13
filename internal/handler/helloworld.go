@@ -9,11 +9,11 @@ import (
 )
 
 type HelloWorldHandler struct {
-	hwService service.HelloWorldService
+	svc *service.HelloWorldService
 }
 
-func NewHelloWorldHandler(hwService service.HelloWorldService) *HelloWorldHandler {
-	return &HelloWorldHandler{hwService: hwService}
+func NewHelloWorldHandler(svc *service.HelloWorldService) *HelloWorldHandler {
+	return &HelloWorldHandler{svc: svc}
 }
 
 // PostHelloWorld 处理POST /helloworld请求
@@ -33,11 +33,11 @@ func (h *HelloWorldHandler) PostHelloWorld() gin.HandlerFunc {
 			return res.Response{Msg: "", Err: err} // Msg 为空，自动使用 err 详情
 		}
 
-		if err := h.hwService.PostHelloWorld(ctx.Request.Context(), req.Message); err != nil {
+		if err := h.svc.PostHelloWorld(ctx.Request.Context(), req.Message); err != nil {
 			return res.Response{Msg: "Failed to create hello world", Err: err}
 		}
 
-		dbInfo, err := h.hwService.GetDatabaseInfo(ctx.Request.Context())
+		dbInfo, err := h.svc.GetDatabaseInfo(ctx.Request.Context())
 		if err != nil {
 			return res.Response{Msg: "Failed to get database info", Err: err}
 		}

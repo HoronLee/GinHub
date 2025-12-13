@@ -21,28 +21,21 @@ type UserRepo interface {
 	DeleteUser(ctx context.Context, id uint) error
 }
 
-// UserService 定义用户服务接口
-type UserService interface {
-	Register(ctx context.Context, req user.RegisterRequest) error
-	Login(ctx context.Context, req user.LoginRequest) (string, error)
-	DeleteUser(ctx context.Context, userID uint) error
-}
-
-// userService 用户服务实现
-type userService struct {
+// UserService 用户服务实现
+type UserService struct {
 	repo      UserRepo
 	jwtHelper *jwtutil.JWT[user.Claims]
 }
 
 // NewUserService 创建UserService实例（通过Wire注入）
-func NewUserService(repo UserRepo) UserService {
+func NewUserService(repo UserRepo) *UserService {
 	// 创建JWT helper
 	jwtCfg := &jwtutil.Config{
 		SecretKey: string(config.JWT_SECRET),
 	}
 	jwtHelper := jwtutil.NewJWT[user.Claims](jwtCfg)
 
-	return &userService{
+	return &UserService{
 		repo:      repo,
 		jwtHelper: jwtHelper,
 	}
@@ -50,7 +43,7 @@ func NewUserService(repo UserRepo) UserService {
 
 // Register 用户注册
 // 检查用户名是否存在，使用MD5加密密码，创建用户
-func (s *userService) Register(ctx context.Context, req user.RegisterRequest) error {
+func (s *UserService) Register(ctx context.Context, req user.RegisterRequest) error {
 	// 1. 检查用户名是否已存在
 	existingUser, err := s.repo.GetUserByUsername(ctx, req.Username)
 	if err != nil && !errors.Is(err, gorm.ErrRecordNotFound) {
@@ -76,7 +69,7 @@ func (s *userService) Register(ctx context.Context, req user.RegisterRequest) er
 
 // Login 用户登录
 // 验证用户名和密码，生成JWT Token
-func (s *userService) Login(ctx context.Context, req user.LoginRequest) (string, error) {
+func (s *UserService) Login(ctx context.Context, req user.LoginRequest) (string, error) {
 	// 1. 查询用户
 	u, err := s.repo.GetUserByUsername(ctx, req.Username)
 	if err != nil {
@@ -115,7 +108,7 @@ func (s *userService) Login(ctx context.Context, req user.LoginRequest) (string,
 }
 
 // DeleteUser 删除用户
-func (s *userService) DeleteUser(ctx context.Context, userID uint) error {
+func (s *UserService) DeleteUser(ctx context.Context, userID uint) error {
 	// 1. 检查用户是否存在
 	_, err := s.repo.GetUserByID(ctx, userID)
 	if err != nil {
